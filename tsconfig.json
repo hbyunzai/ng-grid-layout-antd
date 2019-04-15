@@ -17,6 +17,20 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "core-js/es7/reflect": [
+        "node_modules/core-js/proposals/reflect-metadata"
+      ],
+      "core-js/es6/*": [
+        "node_modules/core-js/es/*"
+      ],
+      "ngx-grid-layout-antd": [
+        "dist/ngx-grid-layout-antd"
+      ],
+      "ngx-grid-layout-antd/*": [
+        "dist/ngx-grid-layout-antd/*"
+      ]
+    }
   }
 }

@@ -134,6 +134,41 @@
           }
         }
       }
+    },
+    "ngx-grid-layout-antd": {
+      "root": "projects/ngx-grid-layout-antd",
+      "sourceRoot": "projects/ngx-grid-layout-antd/src",
+      "projectType": "library",
+      "prefix": "ngx",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ngx-grid-layout-antd/tsconfig.lib.json",
+            "project": "projects/ngx-grid-layout-antd/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-grid-layout-antd/src/test.ts",
+            "tsConfig": "projects/ngx-grid-layout-antd/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-grid-layout-antd/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ngx-grid-layout-antd/tsconfig.lib.json",
+              "projects/ngx-grid-layout-antd/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "ng-grid-layout-antd"

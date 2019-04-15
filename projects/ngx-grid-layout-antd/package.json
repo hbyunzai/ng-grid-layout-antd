@@ -1,0 +1,38 @@
+{
+  "name": "ngx-grid-layout-antd",
+  "version": "0.0.0",
+  "author": "ferried<harlancui@outlook.com>",
+  "repository": {
+    "url": "https://github.com/hbyunzai/ng-grid-layout-antd",
+    "type": "git"
+  },
+  "keywords": [
+    "angular",
+    "yunzai",
+    "antd",
+    "ng-zorro",
+    "ferried",
+    "grid-layout"
+  ],
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "ng-zorro-antd": "^7.2.0",
+    "@angular/animations": "7.2.12",
+    "@angular/common": "7.2.12",
+    "@angular/compiler": "7.2.12",
+    "@angular/core": "~7.2.12",
+    "@angular/forms": "~7.2.12",
+    "@angular/platform-browser": "~7.2.12",
+    "@angular/platform-browser-dynamic": "~7.2.12",
+    "@angular/router": "~7.2.12",
+    "rxjs": "~6.4.0",
+    "zone.js": "~0.9.0",
+    "core-js": "^3.0.1"
+  },
+  "devDependencies": {
+    "husky": "^1.3.1",
+    "conventional-changelog-cli": "^2.0.12",
+    "validate-commit-msg": "^2.14.0"
+  }
+}
