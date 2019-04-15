@@ -1,0 +1,26 @@
+<div [ngClass]="{
+                 'ng-grid-item': true,
+                 'resizing' : isResizing,
+                 'ng-draggable-dragging' : isDragging,
+                 'cssTransforms' : useCssTransforms,
+                 'render-rtl' : renderRtl,
+                 'disable-userselect': isDragging,
+                 'no-touch': isAndroid ,
+                 'ng-grid-placeholder': i < 0 ? true : false
+                }"
+     [ngStyle]="style">
+  <div *ngIf="!static; else elseBlock" class="grid-drag-handle">
+    <button (click)="delGrid()">Del</button>
+    <button (click)="copyGrid()">Copy</button>
+    {{i}}
+  </div>
+
+  <ng-template #elseBlock>
+    <div class="grid-static" (click)="addGrid()">
+
+    </div>
+  </ng-template>
+
+  <ng-template flag></ng-template>
+  <span *ngIf="isResizable" [ngClass]="resizableHandleClass"></span>
+</div>
