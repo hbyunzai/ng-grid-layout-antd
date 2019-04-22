@@ -6,6 +6,8 @@ import {
   SimpleChanges,
   ElementRef,
   Input,
+  OnChanges,
+  ViewContainerRef
 } from '@angular/core';
 import {setTopLeft, setTopRight, setTransform, setTransformRtl} from '../utils/utils';
 import {getDocumentDir} from '../utils/domUtils';
@@ -13,16 +15,21 @@ import {FlagDirective} from '../directive/flag.directive';
 import {createCoreData, getControlPosition} from '../utils/draggableUtils';
 import {EventService} from '../service/event.service';
 import * as interactjs from 'interactjs';
+import {GridDynamicComponent} from '../grid-dynamic/grid-dynamic.component';
+import {DataArray, WidgetType} from '../schema';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {RfmenuComponent} from '../widget/rfmenu.component';
+import {RfchartComponent} from '../widget/rfchart.component';
 
 @Component({
   selector: 'ngx-grid-item',
   templateUrl: './grid-item.component.html',
   styleUrls: ['./grid-item.component.less']
 })
-export class GridItemComponent implements OnInit {
+export class GridItemComponent implements OnInit, OnChanges {
   interact = (interactjs as any).default ? (interactjs as any).default : interactjs;
   @ViewChild(FlagDirective) flag: FlagDirective;
-  @Input() componentData;
+  // @Input() componentData;
   @Input() isDraggable = null;
   @Input() isResizable = null;
   @Input() minH = 1;
@@ -44,6 +51,10 @@ export class GridItemComponent implements OnInit {
   @Input() maxRows = Infinity;
   @Input() useCssTransforms = false;
   @Input() static;
+
+  @Input() componentType: string;    // 控件类型
+  @Input() data;  // 控件数据
+
   private width;
   private initWidth = true;
   public isDragging = false;
@@ -75,9 +86,26 @@ export class GridItemComponent implements OnInit {
   public isAndroid = navigator.userAgent.toLowerCase().indexOf('android') !== -1;
   public resizableHandleClass = this.renderRtl ? 'vue-resizable-handle vue-rtl-resizable-handle' : 'vue-resizable-handle';
 
-  // #end@computed
+  // 视图容器
+  @ViewChild('content', {read: ViewContainerRef}) content: ViewContainerRef;
 
-  constructor(private _ngEl: ElementRef, private eventService: EventService, private componentFactoryResolver: ComponentFactoryResolver) {
+  visible: boolean = false;
+  validateForm: FormGroup;
+  WidgetType: WidgetType[] = [
+    {
+      label: '菜单',
+      value: 'menu'
+    },
+    {
+      label: '图表',
+      value: 'chart'
+    }
+  ];
+
+  constructor(private _ngEl: ElementRef,
+              private eventService: EventService,
+              private componentFactoryResolver: ComponentFactoryResolver,
+              private fb: FormBuilder) {
   }
 
 
@@ -89,28 +117,22 @@ export class GridItemComponent implements OnInit {
     this.eventService._event.on('setRowHeight', this.updateWidth, this);
     this.eventService._event.on('directionchange', this.directionchangeHandler, this);
     this.eventService._event.on('setColNum', this.setColNum, this);
-    console.log('P Init _ngEl', this._ngEl);
-    this.loadComponent();
+    this.loadComponent(this.componentType, this.data);
+    this.InitConfigForm();
   }
 
   /**
    *  动态组件加载
    */
-  loadComponent() {
-    console.log('loadComponent', this.componentData);
-    if (!this.componentData) {
-      return;
-    }
-    let componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.componentData.component);
-    let viewContainerRef = this.flag.viewContainerRef;
-    viewContainerRef.clear();
-    let componentRef = viewContainerRef.createComponent(componentFactory);
-    (<any> componentRef.instance).data = this.componentData.data;
-    console.log('this.flag.viewContainerRef', this.flag.viewContainerRef);
-    // if (this.componentData.auto) {
-    //   setTimeout(this.autoSize.bind(this));
-    // } else {
-    // }
+  loadComponent(componentType, data) {
+    console.log('动态组件加载：');
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(GridDynamicComponent);
+    // componentFactory.inputs.push({propName: 'componentType', templateName: 'data'});
+    const com = this.content.createComponent(componentFactory);
+    com.instance.componentType = componentType;
+    com.instance.data = data;
+    console.log('com.instance:::::');
+    console.log(com.instance);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -176,10 +198,6 @@ export class GridItemComponent implements OnInit {
       // this.tryMakeResizable();
       this.createStyle();
     }
-  }
-
-  public ngAfterViewInit() {
-    console.log('P ngAfterViewInit');
   }
 
   public updateWidthHandler(width): void {
@@ -311,7 +329,7 @@ export class GridItemComponent implements OnInit {
         pos = this.calcPosition(this.innerX, this.innerY, this.innerW, this.innerH);
         newSize.width = pos.width;
         newSize.height = pos.height;
-        //                        console.log("### resize end => " + JSON.stringify(newSize));
+        // console.log("### resize end => " + JSON.stringify(newSize));
         this.resizing = null;
         this.isResizing = false;
         break;
@@ -592,15 +610,108 @@ export class GridItemComponent implements OnInit {
     }
   }
 
-  public delGrid() {
-    this.eventService._event.emit('removeGrid', this.i);
+  // public delGrid() {
+  //   this.eventService._event.emit('removeGrid', this.i);
+  // }
+  //
+  // public copyGrid() {
+  //   this.eventService._event.emit('copyGrid', this.i);
+  // }
+  //
+  // public addGrid() {
+  //   this.eventService._event.emit('addGrid', this.i);
+  // }
+
+  /**
+   * 配置控件
+   */
+  configure() {
+    // this.ToConfigure.emit('outValue');
+    this.visible = true;
+    console.log('配置控件:');
+    console.log(this.componentType);
+    console.log(this.w);
+    console.log(this.h);
+    console.log(this.x);
+    console.log(this.y);
+    console.log(this.data);
   }
 
-  public copyGrid() {
-    this.eventService._event.emit('copyGrid', this.i);
+  get optionlist(): FormArray {
+    return this.validateForm.get('optionlist') as FormArray;
   }
 
-  public addGrid() {
-    this.eventService._event.emit('addGrid', this.i);
+  InitConfigForm() {
+    this.validateForm = this.fb.group({
+      componentType: [this.componentType, [Validators.required]],
+      w: [this.w, [Validators.required]],
+      h: [this.h, [Validators.required]],
+      x: [this.x, [Validators.required]],
+      y: [this.y, [Validators.required]],
+      optionlist: this.fb.array([
+        this.fb.group({
+          year: [null],
+          value: [null],
+        }),
+      ]),
+      desc: [null]
+    });
+
+    if (this.data.length > 0) {
+      this.data.forEach((item) => {
+        this.optionlist.push(this.fb.group({
+          year: [item.year],
+          value: [item.value]
+        }));
+      });
+    }
+  }
+
+  /**
+   * 添加图表值
+   */
+  addOption() {
+    this.optionlist.push(this.fb.group({
+      year: [''],
+      value: ['']
+    }));
+  }
+
+  /**
+   * 删除图表值
+   */
+  delOption(index) {
+    const control = <FormArray>this.validateForm.controls['optionlist'];
+    control.removeAt(index);
+  }
+
+  onSubmitConfigForm() {
+    for (const i in this.validateForm.controls) {
+      this.validateForm.controls[i].markAsDirty();
+      this.validateForm.controls[i].updateValueAndValidity();
+    }
+
+    console.log('提交表单配置。。。');
+    console.log(this.validateForm.value);
+    this.innerW = Number(this.validateForm.value.w);
+    this.innerH = Number(this.validateForm.value.h);
+    this.innerX = Number(this.validateForm.value.x);
+    this.innerY = Number(this.validateForm.value.y);
+    this.createStyle();
+
+    this.componentType = this.validateForm.value.componentType;
+    this.data = this.validateForm.value.optionlist;
+
+    this.content.clear();
+    this.loadComponent(this.componentType, this.data);
+    this.validateForm.reset();
+
+    const control = <FormArray>this.validateForm.controls['optionlist'];
+    control.value.forEach((item, index) => {
+      if (index > 0) {
+        control.removeAt(index);
+      }
+    });
+    this.visible = false;
   }
 }

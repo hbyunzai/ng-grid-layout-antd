@@ -1,5 +1,5 @@
 import {bottom, compact, getLayoutItem, getMaxId, moveElement, validateLayout} from '../utils/utils';
-import {Component, ElementRef, Input, OnInit, SimpleChanges} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {findOrGenerateResponsiveLayout, getBreakpointFromWidth, getColsFromBreakpoint} from '../utils/responsiveUtils';
 import {EventService} from '../service/event.service';
 import {addWindowEventListener} from '../utils/domUtils';
@@ -12,7 +12,7 @@ import * as elementResizeDetectorMaker from 'element-resize-detector';
   templateUrl: './grid-layout.component.html',
   styleUrls: ['./grid-layout.component.less']
 })
-export class GridLayoutComponent implements OnInit {
+export class GridLayoutComponent implements OnInit, OnChanges, AfterViewInit {
 
   erd = (elementResizeDetectorMaker as any).default ? (elementResizeDetectorMaker as any).default : elementResizeDetectorMaker;
   @Input() public autoSize = true;
@@ -45,9 +45,9 @@ export class GridLayoutComponent implements OnInit {
   ngOnInit() {
     this.eventService._event.on('resizeEvent', this.resizeEventHandler, this);
     this.eventService._event.on('dragEvent', this.onDragEventHandler, this);
-    this.eventService._event.on('removeGrid', this.removeGridHandler, this);
-    this.eventService._event.on('copyGrid', this.copyGridHandler, this);
-    this.eventService._event.on('addGrid', this.addGridHandler, this);
+    // this.eventService._event.on('removeGrid', this.removeGridHandler, this);
+    // this.eventService._event.on('copyGrid', this.copyGridHandler, this);
+    // this.eventService._event.on('addGrid', this.addGridHandler, this);
     this.maxId = getMaxId(this.layout);
   }
 
@@ -103,53 +103,53 @@ export class GridLayoutComponent implements OnInit {
     this.dragEvent(eventName, id, x, y, w, h);
   }
 
-  public removeGridHandler(id) {
-    let gIndex = this.layout.findIndex((obj) => {
-      return obj.i == id;
-    });
-    let _grid = this.layout.splice(gIndex, 1);
-    this.maxId = getMaxId(this.layout);
-    console.log('[oId = %s] [gIndex = %s]', id, gIndex, _grid, this.maxId);
-    this.onWindowResize();
-  }
+  // public removeGridHandler(id) {
+  //   let gIndex = this.layout.findIndex((obj) => {
+  //     return obj.i == id;
+  //   });
+  //   let _grid = this.layout.splice(gIndex, 1);
+  //   this.maxId = getMaxId(this.layout);
+  //   console.log('[oId = %s] [gIndex = %s]', id, gIndex, _grid, this.maxId);
+  //   this.onWindowResize();
+  // }
 
   // 复制 Grid 栅格
-  public copyGridHandler(id) {
-    let gIndex = this.layout.findIndex((obj) => {
-      return obj.i == id;
-    });
-    let _grid = this.layout[gIndex];
-    let newGrid = lodash.cloneDeep(_grid);
-    console.log('newGrid ===> ', newGrid);
-    newGrid.i = ++this.maxId;
-    // Horizontal
-    if (newGrid.x + newGrid.w * 2 <= this.eventService._cols) {
-      newGrid.x = newGrid.x + newGrid.w;
-    } else { // Vertical
-      newGrid.y = newGrid.y + newGrid.h;
-    }
-    this.layout.push(newGrid);
-    this.onWindowResize();
-  }
+  // public copyGridHandler(id) {
+  //   let gIndex = this.layout.findIndex((obj) => {
+  //     return obj.i == id;
+  //   });
+  //   let _grid = this.layout[gIndex];
+  //   let newGrid = lodash.cloneDeep(_grid);
+  //   console.log('newGrid ===> ', newGrid);
+  //   newGrid.i = ++this.maxId;
+  //   // Horizontal
+  //   if (newGrid.x + newGrid.w * 2 <= this.eventService._cols) {
+  //     newGrid.x = newGrid.x + newGrid.w;
+  //   } else { // Vertical
+  //     newGrid.y = newGrid.y + newGrid.h;
+  //   }
+  //   this.layout.push(newGrid);
+  //   this.onWindowResize();
+  // }
 
-  public addGridHandler(id) {
-    let gIndex = this.layout.findIndex((obj) => {
-      return obj.i == id;
-    });
-    let _grid = this.layout[gIndex];
-    let newGrid = lodash.cloneDeep(_grid);
-    console.log('newGrid ===> ', newGrid);
-    newGrid.i = ++this.maxId;
-    // Horizontal
-    if (newGrid.x + newGrid.w * 2 <= this.eventService._cols) {
-      newGrid.x = newGrid.x + newGrid.w;
-    } else { // Vertical
-      newGrid.y = newGrid.y + newGrid.h;
-    }
-    delete newGrid.static;
-    this.layout.push(newGrid);
-    this.onWindowResize();
-  }
+  // public addGridHandler(id) {
+  //   let gIndex = this.layout.findIndex((obj) => {
+  //     return obj.i == id;
+  //   });
+  //   let _grid = this.layout[gIndex];
+  //   let newGrid = lodash.cloneDeep(_grid);
+  //   console.log('newGrid ===> ', newGrid);
+  //   newGrid.i = ++this.maxId;
+  //   // Horizontal
+  //   if (newGrid.x + newGrid.w * 2 <= this.eventService._cols) {
+  //     newGrid.x = newGrid.x + newGrid.w;
+  //   } else { // Vertical
+  //     newGrid.y = newGrid.y + newGrid.h;
+  //   }
+  //   delete newGrid.static;
+  //   this.layout.push(newGrid);
+  //   this.onWindowResize();
+  // }
 
   // 滚动条 和 resize 需要重写
   public onWindowLoad(): any {
@@ -350,15 +350,15 @@ export class GridLayoutComponent implements OnInit {
 
   public findDifference(layout, originalLayout): any {
     // Find values that are in result1 but not in result2
-    const uniqueResultOne = layout.filter(function(obj) {
-      return !originalLayout.some(function(obj2) {
+    const uniqueResultOne = layout.filter(function (obj) {
+      return !originalLayout.some(function (obj2) {
         return obj.i === obj2.i;
       });
     });
 
     // Find values that are in result2 but not in result1
-    const uniqueResultTwo = originalLayout.filter(function(obj) {
-      return !layout.some(function(obj2) {
+    const uniqueResultTwo = originalLayout.filter(function (obj) {
+      return !layout.some(function (obj2) {
         return obj.i === obj2.i;
       });
     });

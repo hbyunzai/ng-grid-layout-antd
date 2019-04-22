@@ -13,11 +13,6 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --pkg package.json",
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s --pkg package.json"
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "validate-commit-msg"
-    }
-  },
   "private": true,
   "dependencies": {
     "@angular/animations": "7.2.12",
@@ -41,6 +36,7 @@
     "ngx-grid-layout-antd": "./dist/ngx-grid-layout-antd",
     "rxjs": "~6.4.0",
     "tslib": "^1.9.3",
+    "viser-ng": "^2.4.4",
     "zone.js": "~0.9.0"
   },
   "devDependencies": {
@@ -55,7 +51,6 @@
     "@types/node": "~11.13.2",
     "babel-loader": "^8.0.5",
     "codelyzer": "~5.0.0",
-    "conventional-changelog-cli": "^2.0.12",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.0.1",
