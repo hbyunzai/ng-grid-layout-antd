@@ -14,8 +14,6 @@
     "ferried",
     "grid-layout"
   ],
-  "dependencies": {
-  },
   "peerDependencies": {
     "ng-zorro-antd": "^7.2.0",
     "@angular/animations": "7.2.12",
@@ -28,7 +26,8 @@
     "@angular/router": "~7.2.12",
     "rxjs": "~6.4.0",
     "zone.js": "~0.9.0",
-    "core-js": "^3.0.1"
+    "core-js": "^3.0.1",
+    "viser-ng": "^2.4.4"
   },
   "devDependencies": {
     "husky": "^1.3.1",

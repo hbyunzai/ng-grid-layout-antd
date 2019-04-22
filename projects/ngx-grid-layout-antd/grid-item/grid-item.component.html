@@ -9,18 +9,144 @@
                  'ng-grid-placeholder': i < 0 ? true : false
                 }"
      [ngStyle]="style">
-  <div *ngIf="!static; else elseBlock" class="grid-drag-handle">
-    <button (click)="delGrid()">Del</button>
-    <button (click)="copyGrid()">Copy</button>
-    {{i}}
-  </div>
 
-  <ng-template #elseBlock>
-    <div class="grid-static" (click)="addGrid()">
 
-    </div>
-  </ng-template>
+  <!--<div *ngIf="!static; else elseBlock" class="grid-drag-handle">-->
+  <!--<button (click)="delGrid()">Del</button>-->
+  <!--<button (click)="copyGrid()">Copy</button>-->
+  <!--{{i}}-->
+  <!--</div>-->
 
-  <ng-template flag></ng-template>
+  <!--<ng-template #elseBlock>-->
+  <!--<div class="grid-static" (click)="addGrid()">-->
+
+  <!--</div>-->
+  <!--</ng-template>-->
+  <!--<ng-template flag></ng-template>-->
+
+  <button type="button" nz-button nzType="primary" (click)="configure()">
+    <i nz-icon nzType="form" nzTheme="outline"></i>配置
+  </button>
+  <ng-container #content></ng-container>
+  <!--右下角缩放标志-->
   <span *ngIf="isResizable" [ngClass]="resizableHandleClass"></span>
 </div>
+
+
+<!--配置控件-->
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzWidth]="720"
+  [nzVisible]="visible"
+  nzTitle="控件配置"
+  (nzOnClose)="visible = false"
+>
+  <form nz-form nz-form [formGroup]="validateForm" (submit)="onSubmitConfigForm()">
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label nzRequired>控件类型</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="componentType" nzAllowClear nzPlaceHolder="请选择控件类型……">
+              <nz-option [nzValue]="item.value" [nzLabel]="item.label" *ngFor="let item of WidgetType"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>控件宽度</nz-form-label>
+          <nz-form-control>
+            <input nz-input placeholder="请输入控件宽度……" formControlName="w"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>控件高度</nz-form-label>
+          <nz-form-control>
+            <input nz-input placeholder="请输入控件高度……" formControlName="h"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>控件横向位置</nz-form-label>
+          <nz-form-control>
+            <input nz-input placeholder="请输入横向位置……" formControlName="x"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>控件纵向位置</nz-form-label>
+          <nz-form-control>
+            <input nz-input placeholder="请输入纵向位置……" formControlName="y"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8" *ngIf="validateForm.value.componentType == 'chart'">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label nzRequired>图表数据</nz-form-label>
+          <nz-form-control>
+            <div class="option-box" formArrayName="optionlist">
+              <div nz-row *ngFor="let item of optionlist.controls;let i=index;" [formGroupName]="i">
+                <div nz-col nzSpan="10">
+                  <div nz-col nzSpan="3">年：</div>
+                  <div nz-col nzSpan="19">
+                    <input nz-input placeholder="请输入年……" formControlName="year"/>
+                  </div>
+                </div>
+                <div nz-col nzSpan="10">
+                  <div nz-col nzSpan="3">值：</div>
+                  <div nz-col nzSpan="19">
+                    <input nz-input placeholder="请输入值……" formControlName="value"/>
+                  </div>
+                </div>
+                <div nz-col nzSpan="4" *ngIf="i>0">
+                  <button type="button" nz-button nzType="danger" (click)="delOption(i)">
+                    <i nz-icon nzType="delete" nzTheme="outline"></i>
+                  </button>
+                </div>
+              </div>
+              <nz-form-item>
+                <nz-form-control>
+                  <button type="button" nz-button nzType="primary" (click)="addOption()">
+                    <i nz-icon nzType="plus" nzTheme="outline"></i>添加
+                  </button>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>描述</nz-form-label>
+          <nz-form-control>
+                <textarea
+                  nz-input
+                  placeholder="请输入控件描述……"
+                  [nzAutosize]="{ minRows: 4, maxRows: 4 }"
+                  formControlName="desc"
+                ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="footer">
+      <button type="button" (click)="visible = false" class="ant-btn" style="margin-right: 8px;"><span>取消</span>
+      </button>
+      <button class="ant-btn ant-btn-primary"><span>保存</span></button>
+    </div>
+  </form>
+
+</nz-drawer>

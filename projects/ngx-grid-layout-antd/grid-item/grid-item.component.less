@@ -7,12 +7,15 @@
 .ng-grid-item {
   transition: all 200ms ease;
   transition-property: left, top, right;
-  border: 2px dashed orange;
-  border-radius: 5px;
+  border: 1px dashed orange;
+  //border-radius: 5px;
   box-sizing: border-box;
-  background: #ccc;
+  //background: #ccc;
   z-index: 2;
   /* add right for rtl */
+  overflow: hidden;
+  width: auto;
+  height: auto;
 }
 
 .ng-grid-item.no-touch {
@@ -105,36 +108,47 @@
   cursor: se-resize;
 }
 
-.grid-drag-handle{
-  width: 100%;
-  height: 25px;
-  background: steelblue;
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
-}
+//.grid-drag-handle{
+//  width: 100%;
+//  height: 25px;
+//  background: steelblue;
+//  border-top-right-radius: 5px;
+//  border-top-left-radius: 5px;
+//}
 
-.grid-static {
-  /* background: repeating-linear-gradient(red,blue); */
-  /* background: -webkit-linear-gradient(left, #eee , rgb(171, 149, 109));
-  background: -o-linear-gradient(right, #eee, orange);
-  background: -moz-linear-gradient(right, #eee, orange);
-  background: linear-gradient(to right, #eee , rgb(171, 149, 109));  */
-  background: #eee;
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
-  cursor: pointer;
-}
+//.grid-static {
+//  /* background: repeating-linear-gradient(red,blue); */
+//  /* background: -webkit-linear-gradient(left, #eee , rgb(171, 149, 109));
+//  background: -o-linear-gradient(right, #eee, orange);
+//  background: -moz-linear-gradient(right, #eee, orange);
+//  background: linear-gradient(to right, #eee , rgb(171, 149, 109));  */
+//  background: #eee;
+//  width: 100%;
+//  height: 100%;
+//  border-radius: 5px;
+//  cursor: pointer;
+//}
 
-.grid-static::before {
-  content: "+";
+//.grid-static::before {
+//  content: "+";
+//  position: absolute;
+//  top:50%;
+//  left:50%;
+//  width:100%;
+//  transform:translate(-50%,-50%);
+//  text-align: center;
+//  color:#ccc;
+//  font-size: 6rem;
+//  font-family: 'Courier New', Courier, monospace;
+//}
+
+.footer {
   position: absolute;
-  top:50%;
-  left:50%;
-  width:100%;
-  transform:translate(-50%,-50%);
-  text-align: center;
-  color:#ccc;
-  font-size: 6rem;
-  font-family: 'Courier New', Courier, monospace;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid rgb(232, 232, 232);
+  padding: 10px 16px;
+  text-align: right;
+  left: 0;
+  background: #fff;
 }
